@@ -1,5 +1,4 @@
-short appAdmin();
+char appAdmin(produto [],int);
 void Adicionar();
 void Excluir();
-void Listar();
-void SairAdmin();
+void Listar(produto [],int);

@@ -3,9 +3,18 @@
 
 using namespace std;
 
-short appAdmin() {
-	int a;
-	return a = 0;
+char appAdmin(produto ptr[],int tamVet) {
+	char ch;
+	cout << " Painel de Controle\n"
+		<< " ===================\n"
+		<< " (A)dicionar\n"
+		<< " (E)xcluir\n"
+		<< " (L)istar\n"
+		<< " (S)air\n"
+		<< " ===================\n"
+		<< " Opção: [_]\b\b";
+	cin >> ch;
+	return ch;
 }
 
 void Adicionar() {
@@ -14,9 +23,12 @@ void Adicionar() {
 void Excluir() {
 
 }
-void Listar() {
-
-}
-void SairAdmin() {
-
+void Listar(produto ptr[],int tamVet) {
+	cout << "Listagem\n" 
+		<< "--------\n";
+	for (int i = 0; i < tamVet; i++) {
+		cout << ptr[i].nome;
+		cout.left; cout.width(10); cout << "- R$" << ptr[i].prec;
+		cout.left; cout.width(4); cout << "- " << ptr[i].quant << "und."<< endl;
+	}
 }
