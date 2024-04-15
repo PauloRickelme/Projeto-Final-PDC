@@ -3,16 +3,28 @@
 
 using namespace std;
 
-char appUser( produto ptr[], int tamVet,unsigned short pd) {
+char appUser( produto ptr[], int tamVet, int *item,int *quant,int cesta) {
 	char ch = 'A';
 	
 	cout << " Rapizinho" << endl
 			<< "===========" << endl;
-	if (pd != 0) {
-		
+	if (cesta != 0) {
+		for (int i = 0; i < cesta; i++) {
+			cout << quant[i] << " "
+				<< ptr[item[i]].nome << " de R$";
+			cout << setprecision(2) << fixed
+				<< ptr[item[i]].prec << " = R$";
+			cout << setprecision(2) << fixed
+				<< ptr[item[i]].prec * quant[i] << endl;
+		}
+		cout << "===========" << endl;
 	}
 	for (int i = 0; i< tamVet;i++){
-		cout << "(" << ch << ") " << ptr[i].nome << endl;
+		cout << "(" << ch << ") " << ptr[i].nome;
+		if (ptr[i].quant == 0) {
+			cout << "(INDISPONIVEL)";
+		}
+		cout << endl;
 		ch++;
 	}
 	cout << "(S) Sair" << endl
@@ -21,14 +33,9 @@ char appUser( produto ptr[], int tamVet,unsigned short pd) {
 	cin >> ch;
 	return ch;
 }
-unsigned short Pedido(produto ptr[], int posicao) {
-	//A lógica usada aqui foi de manter um int carregando 2 informações
-	//A posição no vetor ( 8 Bits )
-	//A quantidade de itens a serem pedidos ( 8 bits )
-	//infelizmente não achei utilizada para os outros 16 bits
+void Pedido(produto ptr[], int posicao, int *item, int *quant) {
 
-	unsigned short retorno,mid = posicao;
-	mid = mid << 8;
+	int retorno;
 	cout << "Pedido\n"
 		<< "======\n"
 		<< ptr[posicao].nome << endl
@@ -40,17 +47,89 @@ unsigned short Pedido(produto ptr[], int posicao) {
 		erro(1);
 		cout << "Quantidade disponivel: "
 			<< ptr[posicao].quant << endl;
-		return 0;
 	}
 	else {
-		retorno = retorno | mid;
-		return retorno;
+		*item = posicao;
+		*quant = retorno;
+		ptr[posicao].quant -= retorno;
 	}
-	
 }
-void Pagamento() {
+bool Pagamento(produto ptr[], int tamVet, int* item, int* quant, int cesta) {
+	int loop = 0;
+	float total = 0, desconto;
+	char ch;
 
-}
-void Finalizar() {
+	for (int i = 0; i < cesta; i++) {
+		total += ptr[item[i]].prec * quant[i];
+	}
+	total += 6;
 
+	do {
+		cout << " Rapizinho" << endl
+			<< "===========" << endl;
+		for (int i = 0; i < cesta; i++) {
+			cout << quant[i] << " "
+				<< ptr[item[i]].nome << " de R$";
+			cout << setprecision(2) << fixed
+				<< ptr[item[i]].prec << " = R$";
+			cout << setprecision(2) << fixed
+				<< ptr[item[i]].prec * quant[i] << endl;
+		}
+		cout << "Taxa de entrega = R$6.00\n";
+		if (loop != 0) {
+			if (ch == 'P') {
+				desconto = total * 0.10;
+				cout << "Desconto de 10% = R$";
+				cout << setprecision(2) << fixed << desconto << endl;
+				total -= desconto;
+			}
+			else {
+				desconto = total * 0.05;
+				cout << "Desconto de 5% = R$";
+				cout << setprecision(2) << fixed << desconto << endl;
+				total -= desconto;
+			}
+				
+			
+		}
+		cout << "===========\n";
+		if (loop == 0) {
+			cout << "Total = R$";
+			cout << setprecision(2) << fixed << total;
+
+			cout << "\n\n[P] Pix\n"
+				<< "[C] Cartão\n\n"
+				<< "Pagamento: [_]\b\b";
+			cin >> ch;
+			switch (ch)
+			{
+			case 'p':
+			case 'P':
+				ch = 'P';
+				loop++;
+				break;
+			case 'c':
+			case 'C':
+				ch = 'C';
+				loop++;
+				break;
+			default:
+				erro(0);
+				break;
+			}
+		}
+		else {
+			cout << "Total = R$";
+			cout << setprecision(2) << fixed << total;
+
+			cout << "\nConfirma Pedido (S/N): [_]\b\b";
+			cin >> ch;
+			loop++;
+		}
+		cls;
+	} while (loop < 2);
+	if (ch == 's' || ch == 'S') {
+		return 1;
+	}
+	else return 0;
 }

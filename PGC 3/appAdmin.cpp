@@ -17,18 +17,36 @@ char appAdmin(produto ptr[],int tamVet) {
 	return ch;
 }
 
-void Adicionar() {
-
+void Adicionar(produto p[], int tan) {
+	produto novo;
+	cout << "Adicionar\n"
+		<< "--------\n";
+	cout << "Nome: ";
+	cin >> novo.nome;
+	cout << "Preço: ";
+	cin >> novo.prec;
+	cout << "Quantidade: ";
+	cin >> novo.quant;
 }
-void Excluir() {
-
+void Excluir(produto p[], int tam) {
+	int escolha;
+	char confirmar;
+	cout << "Listagem\n"
+		<< "--------\n";
+	for (int i = 0; i < tam; i++) {
+		cout << i + 1 << ") " << p[i].nome << endl;
+	}
+	cout << "\nProduto: [_]\b\b";
+	cin >> escolha;
+	cout << "Deseja excluir \"" << p[escolha - 1].nome << "\" (S/N)? ";
+	cin >>confirmar;
 }
 void Listar(produto ptr[],int tamVet) {
 	cout << "Listagem\n" 
 		<< "--------\n";
 	for (int i = 0; i < tamVet; i++) {
-		cout << ptr[i].nome;
-		cout.left; cout.width(10); cout << "- R$" << ptr[i].prec;
-		cout.left; cout.width(4); cout << "- " << ptr[i].quant << "und."<< endl;
+		cout.width(8); cout.fill(' '); cout << left << ptr[i].nome;
+		cout << "- R$" << setprecision(2) << fixed << ptr[i].prec << " - ";
+		cout.width(2); cout.fill(' '); cout << right << ptr[i].quant << " und." << endl;
 	}
 }

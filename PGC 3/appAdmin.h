@@ -1,4 +1,4 @@
 char appAdmin(produto [],int);
-void Adicionar();
-void Excluir();
+void Adicionar(produto[], int);
+void Excluir(produto[], int);
 void Listar(produto [],int);

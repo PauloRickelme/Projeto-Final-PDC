@@ -1,5 +1,6 @@
 #include <iostream>
 #include <fstream>
+#include <iomanip> 
 
 //Definição de produtos
 struct produto {

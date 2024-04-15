@@ -44,7 +44,6 @@ int main() {
 			fout.write((char*)&p, sizeof(produto));
 			fout.close();
 		}
-		fout.close();
 	}
 
 	//---------------------------------
@@ -59,17 +58,16 @@ int main() {
 	for(int i = 0; fin.read((char*)&ptr[i], sizeof(produto)); i++) {
 	}
 
+	fin.close();
 	//---------------------------------
 	// Escolha do modo de operação
 	//---------------------------------
 
 	ch = modoExecucao();
 	switch (ch) {
-	case 'A':
 	case 'a':
 		ch = 'A';
 		break;
-	case 'U':
 	case 'u':
 		ch = 'U';
 	}
@@ -78,23 +76,29 @@ int main() {
 	// Execução de Usuario
 	//---------------------------------
 	if (ch == 'U'){
-		produto* pedidoAtual = new produto[tamVet];
-		int escolha;
-		unsigned short pedido=0;
+		const int a = tamVet;
+		int escolha, itemPedido[10] = { 0 }, itemQuantidade[10] = {0}, cesta = 0;
+
 		while (ch != 'S' && ch != 's') {
-			ch = appUser(ptr, tamVet, pedido);
+			ch = appUser(ptr,tamVet,&itemPedido[0], &itemQuantidade[0], cesta);
 			escolha = getInt(ch);
 			if (escolha > tamVet && ch !='S' && ch != 's') {
 				erro(0);
 			}
 			else if(ch != 'S' && ch != 's'){
 				cls;
-				pedido = Pedido(ptr,escolha);
+				Pedido(ptr,escolha,&itemPedido[cesta], &itemQuantidade[cesta]);
+				cesta++;
 			}
 			else {
-
+				cls;
+				Pagamento(ptr, tamVet, &itemPedido[0], &itemQuantidade[0], cesta);
+				cout << "---------------------------------------"
+					<< "\n\033[32mObrigado por ter acessado meu programa!\033[0m\n"
+					<< "---------------------------------------\n";
+				pause;
 			}
-			pause; cls;
+			cls;
 		}
 
 	}
@@ -107,27 +111,33 @@ int main() {
 			switch (ch) {
 			case 'A':
 			case 'a':
+				cls;
+				Adicionar(ptr, tamVet);
+				pause; cls;
 				break;
 			case 'E':
 			case 'e':
+				cls;
+				Excluir(ptr, tamVet);
+				pause; cls;
 				break;
 			case 'L':
 			case 'l':
+				cls;
 				Listar(ptr, tamVet);
+				pause; cls;
 				break;
 			case 'S':
 			case 's':
+				cls;
 				break;
 			default:
 				erro(0);
 				pause;
 			}
-			pause; cls;
 		}
 	}
-	cout << "---------------------------------------"
-		<< "\n\033[32mObrigado por ter acessado meu programa!\033[0m\n"
-		<< "---------------------------------------";
+	delete ptr;
 }
 
 char modoExecucao() {
@@ -158,8 +168,6 @@ char modoExecucao() {
 		case 'u':
 			retorno = 'U';
 			break;
-		default:
-			retorno = '.';
 	}
 	} while (retorno != 'A' && retorno != 'U');
 	cls;
