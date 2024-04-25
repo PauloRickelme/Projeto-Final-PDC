@@ -14,11 +14,11 @@ int main() {
 	cls;
 
 	// Variaveis Comuns
-
 	int tamVet; // Tamanho do vetor estoque.bin, também usado para verificar Usuario ou Admin
-	char ch='A';
+	char ch = 'A';
 
-	produto p; // Struct generica para criação de possivel arquivo binario
+	produto* ptr = nullptr; //Vetor principal
+
 
 	//---------------------------------
 	// Verificação de Estoque.bin
@@ -26,35 +26,40 @@ int main() {
 
 	fin.open("estoque.bin", ios_base::in | ios_base::binary);
 	if (!fin.is_open()) {
+		//Cria o arquivo de estoque
 		fout.open("estoque.bin", ios_base::out | ios_base::binary | ios_base::app);
-		cout << "Numero de produtos: ";
-		cin >> tamVet;
-		fout.write((char*)&tamVet, sizeof(int));
 		fout.close();
-		cls;
-		for (int i = 0; i < tamVet;i++) {
-			fout.open("estoque.bin", ios_base::binary | ios_base::out | ios_base::app);
-			cout << "\nNome: ";
-			cin >> p.nome;
-			cout << "Preço: ";
-			cin >> p.prec;
-			cout << "Quantidade: ";
-			cin >> p.quant;
-
-			fout.write((char*)&p, sizeof(produto));
-			fout.close();
-		}
 	}
+	else {
+		//---------------------------------
+		// Leitura de Estoque.bin
+		// Criação de Vetor de Produtos
+		//---------------------------------
+
+		fin.read((char*)&tamVet, sizeof(int));
+
+		delete ptr;
+		ptr = new produto[tamVet];
+
+		//Criando vetor de produtos 
+		//Lendo produtos do estoque
+		for (int i = 0; fin.read((char*)&ptr[i], sizeof(produto)); i++) {
+		}
+
+	}
+	fin.close();
 
 	//---------------------------------
 	// Leitura de Estoque.bin
 	// Criação de Vetor de Produtos
 	//---------------------------------
 
-	fin.read((char*)&tamVet, sizeof(int));
-	
-	produto * ptr = new produto[tamVet];
+	fin.open("estoque.bin", ios_base::in | ios_base::binary);
 
+	fin.read((char*)&tamVet, sizeof(int));
+
+	//Criando vetor de produtos 
+	//Lendo produtos do estoque
 	for(int i = 0; fin.read((char*)&ptr[i], sizeof(produto)); i++) {
 	}
 
@@ -76,8 +81,11 @@ int main() {
 	// Execução de Usuario
 	//---------------------------------
 	if (ch == 'U'){
-		const int a = tamVet;
-		int escolha, itemPedido[10] = { 0 }, itemQuantidade[10] = {0}, cesta = 0;
+		//Varaivieis:
+		int escolha; //Int que sera obtido ao transformar o char do usuario
+		int itemPedido[10] = { 0 }; //Guarda qual o item necessario no pedido
+		int itemQuantidade[10] = { 0 }; //Guarda a quantidade necessaria no pedido
+		int cesta = 0; //guarda o numero atual de produtos adicionados
 
 		while (ch != 'S' && ch != 's') {
 			ch = appUser(ptr,tamVet,&itemPedido[0], &itemQuantidade[0], cesta);
@@ -87,8 +95,10 @@ int main() {
 			}
 			else if(ch != 'S' && ch != 's'){
 				cls;
-				Pedido(ptr,escolha,&itemPedido[cesta], &itemQuantidade[cesta]);
-				cesta++;
+				if (Pedido(ptr, escolha, &itemPedido[cesta], &itemQuantidade[cesta])) {
+					cesta++;
+				}
+				
 			}
 			else {
 				cls;
@@ -98,33 +108,47 @@ int main() {
 					<< "---------------------------------------\n";
 				pause;
 			}
+			char estoque[] = "Pedido_"  ".txt";
 			cls;
 		}
-
+		delete[] ptr;
 	}
 	//---------------------------------
 	// Execução de Admin
 	//---------------------------------
 	else {
+		//Variaveis
+		int modo = 0; // seleciona qual o modo de operação
+				  // vetor padrão ou crescido
 		while (ch != 'S' && ch != 's') {
+			produto* ptr0 = new produto[tamVet];
 			ch = appAdmin(ptr, tamVet);
 			switch (ch) {
 			case 'A':
 			case 'a':
 				cls;
-				Adicionar(ptr, tamVet);
-				pause; cls;
+				if (modo == 0) {
+					Adicionar(ptr, tamVet);
+					modo++;
+				}
+				cls;
 				break;
 			case 'E':
 			case 'e':
 				cls;
-				Excluir(ptr, tamVet);
-				pause; cls;
+				if (modo == 0) {
+					Adicionar(ptr, tamVet);
+					modo++;
+				}
+				cls;
 				break;
 			case 'L':
 			case 'l':
 				cls;
-				Listar(ptr, tamVet);
+				if (modo == 0) {
+					Listar(ptr, tamVet);
+					modo++;
+				}
 				pause; cls;
 				break;
 			case 'S':
@@ -136,10 +160,16 @@ int main() {
 				pause;
 			}
 		}
+		delete[] ptr;
+		cout << "---------------------------------------"
+			<< "\n\033[32mObrigado por ter acessado meu programa!\033[0m\n"
+			<< "---------------------------------------\n";
+		pause; cls;
 	}
-	delete ptr;
 }
 
+
+//Mensagem de confirmação de modo de execução
 char modoExecucao() {
 	char retorno = '.';
 	cout << "Bem - Vindo\n"
@@ -173,6 +203,9 @@ char modoExecucao() {
 	cls;
 	return retorno;
 }
+
+//Recebe um caractere qualquer
+//e retorna o endereço do vetor a acessar
 unsigned short getInt(char ch) {
 	unsigned short retorno = 0;
 	char loop;
@@ -197,6 +230,7 @@ unsigned short getInt(char ch) {
 	return retorno;
 }
 
+//Mensagem de erro
 void erro(int a) {
 	if (a == 0) {
 		cout << "\033[41m"	

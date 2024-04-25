@@ -3,6 +3,8 @@
 
 using namespace std;
 
+
+//Retorna o modo de  operação de admin
 char appAdmin(produto ptr[],int tamVet) {
 	char ch;
 	cout << " Painel de Controle\n"
@@ -17,6 +19,7 @@ char appAdmin(produto ptr[],int tamVet) {
 	return ch;
 }
 
+//Adiciona valor do ponteiro
 void Adicionar(produto p[], int tan) {
 	produto novo;
 	cout << "Adicionar\n"
@@ -28,7 +31,9 @@ void Adicionar(produto p[], int tan) {
 	cout << "Quantidade: ";
 	cin >> novo.quant;
 }
-void Excluir(produto p[], int tam) {
+
+//Exclui valor do ponteiro
+void Excluir(produto p[],int tam) {
 	int escolha;
 	char confirmar;
 	cout << "Listagem\n"
@@ -41,6 +46,8 @@ void Excluir(produto p[], int tam) {
 	cout << "Deseja excluir \"" << p[escolha - 1].nome << "\" (S/N)? ";
 	cin >>confirmar;
 }
+
+//Mostra os produtos do estoque
 void Listar(produto ptr[],int tamVet) {
 	cout << "Listagem\n" 
 		<< "--------\n";
