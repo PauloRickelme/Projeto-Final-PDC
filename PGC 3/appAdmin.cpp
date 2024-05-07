@@ -21,19 +21,21 @@ char appAdmin(produto ptr[],int tamVet) {
 
 //Adiciona valor do ponteiro
 void Adicionar(produto p[], int tan) {
-	produto novo;
+	Listar(p, tan);
+	cin.get();
 	cout << "Adicionar\n"
 		<< "--------\n";
 	cout << "Nome: ";
-	cin >> novo.nome;
+	cin.getline(p[tan].nome,25);
 	cout << "Preço: ";
-	cin >> novo.prec;
+	cin >> p[tan].prec;
 	cout << "Quantidade: ";
-	cin >> novo.quant;
+	cin >> p[tan].quant;
 }
 
 //Exclui valor do ponteiro
 void Excluir(produto p[],int tam) {
+	Listar(p, tam);
 	int escolha;
 	char confirmar;
 	cout << "Listagem\n"
@@ -43,8 +45,21 @@ void Excluir(produto p[],int tam) {
 	}
 	cout << "\nProduto: [_]\b\b";
 	cin >> escolha;
-	cout << "Deseja excluir \"" << p[escolha - 1].nome << "\" (S/N)? ";
-	cin >>confirmar;
+	escolha -= 1;
+	cout << "Deseja excluir \"" << p[escolha].nome << "\" (S/N)? ";
+	cin >> confirmar;
+	if (confirmar == 's' || confirmar =='S') {
+		if (escolha < tam - 1) {
+			for (int i = 0; i < 25; i++) {
+				p[escolha].nome[i] = p[tam - 1].nome[i];
+				if (p[escolha].nome[i] == '\0') {
+					i = 24;
+				}
+			}
+			p[escolha].prec = p[tam - 1].prec;
+			p[escolha].quant = p[tam - 1].quant;
+		}
+	}
 }
 
 //Mostra os produtos do estoque

@@ -38,7 +38,6 @@ int main() {
 
 		fin.read((char*)&tamVet, sizeof(int));
 
-		delete ptr;
 		ptr = new produto[tamVet];
 
 		//Criando vetor de produtos 
@@ -111,45 +110,127 @@ int main() {
 			char estoque[] = "Pedido_"  ".txt";
 			cls;
 		}
+
+		fout.open("estoque.bin", ios_base::trunc | ios_base::in | ios_base::binary);
+		fout.write((char*)&tamVet, sizeof(int));
+		for (int i = 0; i < tamVet; i++) {
+			fout.write((char*)&ptr[i], sizeof(produto));
+		}
+		fout.close();
+
 		delete[] ptr;
 	}
 	//---------------------------------
 	// Execução de Admin
 	//---------------------------------
 	else {
-		//Variaveis
-		int modo = 0; // seleciona qual o modo de operação
-				  // vetor padrão ou crescido
+		produto* ptrNovo = new produto[tamVet];
 		while (ch != 'S' && ch != 's') {
-			produto* ptr0 = new produto[tamVet];
 			ch = appAdmin(ptr, tamVet);
 			switch (ch) {
 			case 'A':
 			case 'a':
+
 				cls;
-				if (modo == 0) {
-					Adicionar(ptr, tamVet);
-					modo++;
+				
+				delete[]ptrNovo;
+				ptrNovo = new produto[tamVet+1];
+				for (int i = 0; i < tamVet; i++) {
+					for (int j = 0; j < 25; j++) {
+						ptrNovo[i].nome[j] = ptr[i].nome[j];
+						if (ptrNovo[i].nome[j] >=65 || ptrNovo[i].nome[j] <=90) {	
+						}
+						else if (ptrNovo[i].nome[j] >= 97 || ptrNovo[i].nome[j] <= 122) {
+						}
+						else {
+							ptrNovo[i].nome[j] = '\0';
+							i = 24;
+						}
+
+					}
+					ptrNovo[i].prec = ptr[i].prec;
+					ptrNovo[i].quant = ptr[i].quant;
 				}
+				ptr = new produto[tamVet+1];
+
+				Adicionar(ptrNovo, tamVet);
+				tamVet += 1;
+
+				for (int i = 0; i < tamVet; i++) {
+					for (int j = 0; j < 25; j++) {
+						ptr[i].nome[j] = ptrNovo[i].nome[j];
+						if (ptr[i].nome[j] >= 65 || ptr[i].nome[j] <= 90) {
+						}
+						else if (ptr[i].nome[j] >= 97 || ptr[i].nome[j] <= 122) {
+						}
+						else {
+							ptr[i].nome[j] = '\0';
+							i = 24;
+						}
+					}
+					ptr[i].prec = ptrNovo[i].prec;
+					ptr[i].quant = ptrNovo[i].quant;
+				}
+				
 				cls;
 				break;
+
 			case 'E':
 			case 'e':
+
 				cls;
-				if (modo == 0) {
-					Adicionar(ptr, tamVet);
-					modo++;
+
+				delete[]ptrNovo;
+				ptrNovo = new produto[tamVet-1];
+				Excluir(ptr, tamVet);
+				tamVet -= 1;
+
+				for (int i = 0; i < tamVet; i++) {
+					for (int j = 0; j < 25; j++) {
+						ptrNovo[i].nome[j] = ptr[i].nome[j];
+						if (ptrNovo[i].nome[j] >= 65 || ptrNovo[i].nome[j] <= 90) {
+						}
+						else if (ptrNovo[i].nome[j] >= 97 || ptrNovo[i].nome[j] <= 122) {
+						}
+						else {
+							ptrNovo[i].nome[j] = '\0';
+							i = 24;
+						}
+
+					}
+					ptrNovo[i].prec = ptr[i].prec;
+					ptrNovo[i].quant = ptr[i].quant;
 				}
+				delete[]ptr;
+				ptr = new produto[tamVet];
+				
+				for (int i = 0; i < tamVet; i++) {
+					for (int j = 0; j < 25; j++) {
+						ptr[i].nome[j] = ptrNovo[i].nome[j];
+						if (ptr[i].nome[j] >= 65 || ptr[i].nome[j] <= 90) {
+						}
+						else if (ptr[i].nome[j] >= 97 || ptr[i].nome[j] <= 122) {
+						}
+						else {
+							ptr[i].nome[j] = '\0';
+							i = 24;
+						}
+					}
+					ptr[i].prec = ptrNovo[i].prec;
+					ptr[i].quant = ptrNovo[i].quant;
+				}
+
 				cls;
+
 				break;
 			case 'L':
 			case 'l':
 				cls;
-				if (modo == 0) {
-					Listar(ptr, tamVet);
-					modo++;
-				}
+			
+				Listar(ptr, tamVet);
+			
 				pause; cls;
+
 				break;
 			case 'S':
 			case 's':
@@ -160,11 +241,20 @@ int main() {
 				pause;
 			}
 		}
-		delete[] ptr;
+		delete[] ptrNovo;
 		cout << "---------------------------------------"
 			<< "\n\033[32mObrigado por ter acessado meu programa!\033[0m\n"
 			<< "---------------------------------------\n";
 		pause; cls;
+
+		fout.open("estoque.bin", ios_base::trunc | ios_base::in | ios_base::binary);
+		fout.write((char*)&tamVet, sizeof(int));
+		for (int i = 0; i < tamVet; i++) {
+			fout.write((char*)&ptr[i], sizeof(produto));
+		}
+		fout.close();
+
+		delete[] ptr;
 	}
 }
 
